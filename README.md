@@ -125,5 +125,35 @@ URL de datos abiertos: ttps://www.datosabiertos.gob.ec/dataset/base-de-emergenci
 Reducción de dimensionalidad y clasificación eficiente:
 K-Means simplifica miles de registros de incidentes en un número manejable de clusters de riesgo, permitiendo identificar patrones que serían imposibles detectar manualmente.
 
-Predicción de riesgos con alta precisión:
-XGBoost y Random Forest aprovechan múltiples variables (ubicación, mes, tipo de incidente, tendencias históricas) para generar predicciones con accuracy superior al 80%, permitiendo alertas confiables.
+Predicción de riesgo:
+Random Forest y XGBoost aprovechan historial mensual por provincia y estacionalidad para clasificar meses de mayor volumen. Las métricas reales se calculan con una partición temporal; no se presupone un nivel de accuracy antes de ejecutar la evaluación.
+
+## Ejecución del pipeline y panel web
+
+Requiere Python 3.12 y las dependencias de `requirements.txt`. Desde la raíz del proyecto, instale las dependencias con `pip install -r requirements.txt`.
+
+El flujo completo se ejecuta con `python src/pipeline.py --stage all`. Los datos se recorren por lotes; los archivos originales no se modifican. Para ejecutar por etapas:
+
+1. `python src/pipeline.py --stage preprocess`
+2. `python src/pipeline.py --stage model`
+3. `python src/pipeline.py --stage optimize`
+4. `python src/pipeline.py --stage evaluate`
+
+Los notebooks `notebooks/01_exploracion.ipynb` a `notebooks/05_evaluacion.ipynb` explican estas mismas etapas.
+
+Para abrir el sitio local, ejecute `python src/app.py` y visite `http://127.0.0.1:5000`. El panel tiene las secciones Consultar, Ver gráficos y Ver mapa. El mapa usa Leaflet y mosaicos de OpenStreetMap; necesita acceso a internet para cargar el mapa base.
+
+### Artefactos generados
+
+- `data/processed/*_limpio.csv.gz`: registros normalizados por archivo, comprimidos.
+- `data/processed/monthly_location_counts.csv`: frecuencias agregadas por parroquia y mes.
+- `data/processed/province_risk.csv` y `data/processed/forecast_months.csv`: agrupación territorial y pronóstico categórico.
+- `results/metrics/`: métricas globales y resúmenes por archivo.
+- `results/reports/`: informes Markdown por fuente y resumen global.
+- `results/figures/`: matriz de confusión, ROC, comparación de métricas, silhouette y gráficos por CSV.
+- `results/processing_log.txt`: registro de lectura y procesamiento.
+- `models/`: modelos entrenados serializados.
+
+### Interpretación y limitaciones
+
+Los CSV de origen no incluyen coordenadas geográficas ni población expuesta. Por ello, el mapa y K-Means trabajan a nivel provincial con centroides aproximados; el color expresa volumen relativo de registros, no una tasa poblacional, ubicación exacta de incidentes ni una garantía de seguridad. Los reportes cubren eventos de múltiples servicios (seguridad, tránsito, salud y otros) y las cifras dependen de la cobertura del registro. El pronóstico es una categoría de riesgo por provincia/mes, no una predicción del número de incidentes. Evalúe cobertura, cambios de codificación y meses faltantes antes de utilizar los resultados para decisiones operativas.
