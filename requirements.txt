@@ -3,3 +3,5 @@ numpy==2.3.5
 matplotlib==3.10.9
 seaborn==0.13.2
 scikit-learn==1.8.0
+openpyxl==3.1.5
+pyarrow==21.0.0
