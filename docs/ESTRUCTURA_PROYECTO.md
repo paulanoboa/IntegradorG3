@@ -2,17 +2,17 @@
 
 ```text
 data/
-  raw/                 Fuentes originales por a?o (solo lectura)
-  processed/           Datos limpios, auditor?a y agregados
+  raw/                 Fuentes originales por anio (solo lectura)
+  processed/           Datos limpios, auditoria y agregados
   external/            Fuentes externas documentadas (clima, feriados, GeoJSON)
-notebooks/             Cuadernos numerados de ingesta, an?lisis y modelado
+notebooks/             Cuadernos numerados de ingesta, analisis y modelado
 models/                Estimadores entrenados y metadatos
-apps/                  Aplicaci?n de monitoreo/mapa
-docs/                  Metodolog?a, diccionario y decisiones
-TEMP/                  Material temporal y consignas acad?micas
+apps/                  Aplicacion de monitoreo/mapa
+docs/                  Metodologia, diccionario y decisiones
+TEMP/                  Material temporal y consignas academicas
 ```
 
-## Ejecuci?n
+## Ejecucion
 
 1. Instalar las dependencias del proyecto.
 2. Ejecutar `notebooks/0_ingesta_limpieza.ipynb`.
