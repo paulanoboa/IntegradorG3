@@ -1,20 +1,33 @@
 # Estructura y flujo de trabajo
 
 ```text
-data/
-  raw/                 Fuentes originales por anio (solo lectura)
-  processed/           Datos limpios, auditoria y agregados
-  external/            Fuentes externas documentadas (clima, feriados, GeoJSON)
-notebooks/             Cuadernos numerados de ingesta, analisis y modelado
-models/                Estimadores entrenados y metadatos
-apps/                  Aplicacion de monitoreo/mapa
-docs/                  Metodologia,diccionario y decisiones,docs
-TEMP/                  Material temporal y consignas academicas
-```
+app/                          Aplicacion de monitoreo/mapa
+data/                         Datos usados en el proyecto integrador
+  raw/                        Fuentes originales 
+  processed/                  Datos limpios, auditoria y agregados
+docs/                         Dcoumentación
+  Anexos/                     Información adcional
+  eda_graficos/               Gráficos generados del EDA
+  Entregables/                Entregables semanales del proyecto integrador
+  planificacion.md            Documento de planificación inicial
+  analisis_datos.md           Análisis exploratorio de datos
+  arquitectura.md             Diseño del modelo y arquitectura
+  optimizacion.md             Proceso de optimización (Workshop S5)
+  consideraciones_eticas.md   Análisis ético del proyecto
+  manual_usuario.md           Guía para usuarios finales
+  estructura_proyecto.md      Estructura de carpetas del proyecto
+models/                       Estimadores entrenados y metadatos
+notebooks/                    Jupyter notebooks
+  01_exploracion.ipynb        EDA
+  02_preprocesamiento.ipynb   Limpieza y preparación
+  03_modelado.ipynb           Entrenamiento de modelos
+  04_optimizacion.ipynb       Optimización de hiperparámetros
+  05_evaluacion.ipynb         Evaluación final
+src/                          Fuentes de desarrollo
+results/                      Resultado de los datos, métricas y gráficos
+tests/                        Pruebas
 
 ## Ejecucion
-
-
 
 ## Hallazgos sobre el esquema
 

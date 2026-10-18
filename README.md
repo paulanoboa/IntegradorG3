@@ -21,7 +21,8 @@ mayores incidentes.
 ## License:
 MIT License
 Copyright (c) 2026 Harol Angulo, Paula Noboa
-![License](LICENSE.txt)
+[License](/license.TXT)
+
 
 ## Descripción breve del proyecto: 
 Sistema de IA que utiliza K-Means para detectar zonas de riesgo en Ecuador y XGBoost/Random Forest para predecir los meses críticos de mayor incidencia, generando alertas preventivas para turistas y agencias de viajes. La solución integra análisis geoespacial y predicción temporal para apoyar la toma de decisiones seguras en turismo.
@@ -199,6 +200,33 @@ Ver opción Resultados. Encontrará lo siguiente:
 
 ## 9.Estructura del proyecto:
 • Descripción breve de cada carpeta principal:
+```text
+app/                          Aplicacion de monitoreo/mapa
+data/                         Datos usados en el proyecto integrador
+  raw/                        Fuentes originales 
+  processed/                  Datos limpios, auditoria y agregados
+docs/                         Dcoumentación
+  Anexos/                     Información adcional
+  eda_graficos/               Gráficos generados del EDA
+  Entregables/                Entregables semanales del proyecto integrador
+  planificacion.md            Documento de planificación inicial
+  analisis_datos.md           Análisis exploratorio de datos
+  arquitectura.md             Diseño del modelo y arquitectura
+  optimizacion.md             Proceso de optimización (Workshop S5)
+  consideraciones_eticas.md   Análisis ético del proyecto
+  manual_usuario.md           Guía para usuarios finales
+  estructura_proyecto.md      Estructura de carpetas del proyecto
+models/                       Estimadores entrenados y metadatos
+notebooks/                    Jupyter notebooks
+  01_exploracion.ipynb        EDA
+  02_preprocesamiento.ipynb   Limpieza y preparación
+  03_modelado.ipynb           Entrenamiento de modelos
+  04_optimizacion.ipynb       Optimización de hiperparámetros
+  05_evaluacion.ipynb         Evaluación final
+src/                          Fuentes de desarrollo
+results/                      Resultado de los datos, métricas y gráficos
+tests/                        Pruebas
+
 
 ## 10. Consideraciones éticas:
 • Resumen de aspectos éticos considerados
@@ -218,6 +246,7 @@ Ver LICENSE.txt (MIT LICENSE)
 ## 13. Agradecimientos y referencias
 
 * Agradecimientos:
+
 Queremos expresar nuestro más sincero agradecimiento a nuestros seres queridos, en especial a nuestros amados hijos David y Adrián, quienes han sido el motor que nos ha impulsado a continuar y culminar este proyecto de graduación. Ellos han sido testigos de nuestro esfuerzos diario y esperamos que este logro les sirva de ejemplo, recordándoles que todo sacrificio y dedicación siempre da frutos.
 
 A nuestros queridos padres Yolanda, Humberto, Teresa, Julio, por su apoyo incondicional y constante motivación, que nos permitió mantenernos firmes en este camino. A la UEES, institución que, a través de sus docentes, hizo posible el desarrollo de este proyecto, brindándonos conocimientos y retroalimentación que hemos podido aplicar en la práctica. Finalmente, a nuestros compañeros, por sus valiosos aportes, que enriquecieron nuestro aprendizaje, todo lo mencionado a  contribuido a dar forma a esta propuesta que la hemos realizado con esfuerzo y cariño.
