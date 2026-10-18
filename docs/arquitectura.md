@@ -54,6 +54,7 @@ El notebook de comparación usa un pipeline con la misma codificación geográfi
 
 ## 4. Diagrama de flujo del sistema completo
 Ver ficha de decisión técnica y arquitectura: docs\Semana2\Ficha de Decisión Técnica y Arquitectura Proyecto Integrador IA_G3 280926.docx
+![Diagrama de arquitectura](docs\Anexos\Imagenflujo.jpg)
 
 ```mermaid
 flowchart TD
