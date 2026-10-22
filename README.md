@@ -18,6 +18,17 @@ mayores incidentes.
 
 **Python versión:** 3.12.10
 
+## Aplicación web
+
+El dashboard de Streamlit se inicia desde la raíz del repositorio:
+
+```powershell
+python -m pip install -r requirements.txt
+python -m streamlit run app/app.py
+```
+
+Incluye consulta de escenarios, métricas del notebook de optimización, auditoría de fairness y mapa interactivo. El mapa usa centros aproximados por provincia porque el dataset no contiene coordenadas cantonales. La predicción intenta cargar los modelos `.joblib` disponibles y avisa cuando el artefacto no coincide con el esquema de entrada.
+
 ## License:
 MIT License
 Copyright (c) 2026 Harol Angulo, Paula Noboa
