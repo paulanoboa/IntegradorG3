@@ -1,6 +1,8 @@
 """Shared data and presentation helpers for the Ecuador risk dashboard."""
 from __future__ import annotations
 
+import base64
+import unicodedata
 from pathlib import Path
 import sys
 
@@ -110,15 +112,17 @@ def get_cluster_quality(df: pd.DataFrame) -> dict:
     }
 
 
-def build_top10(df: pd.DataFrame) -> pd.DataFrame:
+def build_top50(df: pd.DataFrame) -> pd.DataFrame:
     recent_years = sorted(df["Anio"].dropna().unique())[-2:]
     recent = df[df["Anio"].isin(recent_years)]
     top = recent.groupby(["provincia_norm", "canton_norm"], as_index=False).agg(
         Incidentes_Criticos_Media=("Delitos_Criticos", "mean"),
         Meses_Alto_Riesgo=("Mes_Alto_Riesgo", "sum"),
         Incidentes_Total_Media=("Total_Incidentes", "mean"),
-    ).sort_values(["Incidentes_Criticos_Media", "Meses_Alto_Riesgo"], ascending=False).head(10).reset_index(drop=True)
-    top["Nivel"] = ["Alto"] * min(3, len(top)) + ["Medio"] * max(0, min(4, len(top) - 3)) + ["Bajo"] * max(0, len(top) - 7)
+    ).sort_values(["Incidentes_Criticos_Media", "Meses_Alto_Riesgo"], ascending=False).head(50).reset_index(drop=True)
+    high_count = round(len(top) * 0.30)
+    medium_count = round(len(top) * 0.40)
+    top["Nivel"] = ["Alto"] * high_count + ["Medio"] * medium_count + ["Bajo"] * (len(top) - high_count - medium_count)
     top["Rango"] = range(1, len(top) + 1)
     return top
 
@@ -191,6 +195,106 @@ def fairness_summary(df: pd.DataFrame) -> pd.DataFrame:
 def render_header(lang: str = "Español") -> None:
     title = "Ecuador · Riesgo y alertas" if lang == "Español" else "Ecuador · Risk and alerts"
     st.markdown(f'<div class="hero"><div class="eyebrow">INTELIGENCIA TERRITORIAL · ECUADOR</div><h1>{title}</h1><p>Modelos de riesgo mensual · K-Means · Random Forest · XGBoost</p></div>', unsafe_allow_html=True)
+
+
+def render_banner() -> None:
+    banner_path = ROOT / "app" / "assets" / "tourism_banner.jpg"
+    st.markdown(
+        "<style>div[data-testid='stImage'] img{width:100%;height:clamp(180px,22vw,300px);"
+        "object-fit:cover;border-radius:20px;box-shadow:0 10px 28px #17352e22}</style>",
+        unsafe_allow_html=True,
+    )
+    st.image(str(banner_path), use_container_width=True)
+
+
+def render_language_buttons() -> str:
+    es_icon = base64.b64encode((ROOT / "app" / "assets" / "flag_es_icon.png").read_bytes()).decode("ascii")
+    us_icon = base64.b64encode((ROOT / "app" / "assets" / "flag_us_icon.png").read_bytes()).decode("ascii")
+    st.markdown(
+        f"""<style>
+        .st-key-language_es button,.st-key-language_en button {{
+          width:64px;min-width:64px;height:46px;padding:0;color:transparent!important;
+          font-size:0!important;background-size:52px 35px!important;
+          background-position:center!important;background-repeat:no-repeat!important;
+        }}
+        .st-key-language_es button {{background-image:url('data:image/png;base64,{es_icon}')!important;}}
+        .st-key-language_en button {{background-image:url('data:image/png;base64,{us_icon}')!important;}}
+        .stButton>button,.stDownloadButton>button{{background-color:#1f5c45!important;border-color:#1f5c45!important;color:white!important;font-weight:700}}
+        .stButton>button:hover,.stDownloadButton>button:hover{{background-color:#123c32!important;border-color:#123c32!important;color:white!important}}
+        </style>""",
+        unsafe_allow_html=True,
+    )
+    selected = st.session_state.get("language", "Español")
+    _, es_col, en_col = st.columns([8.5, 0.75, 0.75])
+    if es_col.button(" ", help="Español", key="language_es", type="primary" if selected == "Español" else "secondary"):
+        st.session_state["language"] = "Español"
+        st.rerun()
+    if en_col.button(" ", help="English", key="language_en", type="primary" if selected == "English" else "secondary"):
+        st.session_state["language"] = "English"
+        st.rerun()
+    return st.session_state.get("language", "Español")
+
+
+def make_predictions_pdf(history: pd.DataFrame) -> bytes:
+    """Build a valid paginated PDF without optional third-party packages."""
+    import datetime
+
+    def plain_text(value: object) -> str:
+        return unicodedata.normalize("NFKD", str(value)).encode("ascii", "ignore").decode("ascii")
+
+    lines = [
+        "ECUADOR | REPORTE DE PREDICCIONES DE RIESGO",
+        f"Generado: {datetime.datetime.now().strftime('%Y-%m-%d %H:%M')}",
+        "Estimaciones informativas; no constituyen alertas oficiales.",
+        "",
+        "PROVINCIA / CANTON | MES/ANO | RIESGO | PROBABILIDAD | MODELO",
+        "-" * 90,
+    ]
+    for _, row in history.iterrows():
+        canton = row.get("Cantón", row.get("Canton", ""))
+        year = row.get("Año", row.get("Anio", ""))
+        lines.append(plain_text(
+            f"{row.get('Provincia', '')} / {canton} | {row.get('Mes', '')}/{year} | "
+            f"{row.get('Riesgo', '')} | {float(row.get('Probabilidad', 0)):.1%} | {row.get('Modelo', '')}"
+        )[:105])
+
+    chunks = [lines[i:i + 43] for i in range(0, len(lines), 43)] or [[]]
+    objects: list[bytes] = [b"<< /Type /Catalog /Pages 2 0 R >>"]
+    page_ids = [4 + 2 * i for i in range(len(chunks))]
+    kids = " ".join(f"{page_id} 0 R" for page_id in page_ids)
+    objects.append(f"<< /Type /Pages /Kids [{kids}] /Count {len(chunks)} >>".encode("ascii"))
+    objects.append(b"<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>")
+
+    for index, page_lines in enumerate(chunks):
+        page_id = 4 + 2 * index
+        stream_id = page_id + 1
+        commands = ["BT", "/F1 9 Tf"]
+        y = 750
+        for line in page_lines:
+            safe = line.replace("\\", "\\\\").replace("(", "\\(").replace(")", "\\)")
+            commands.append(f"1 0 0 1 42 {y} Tm ({safe}) Tj")
+            y -= 16
+        commands.append("ET")
+        stream = "\n".join(commands).encode("ascii", "replace")
+        page = (
+            f"<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] "
+            f"/Resources << /Font << /F1 3 0 R >> >> /Contents {stream_id} 0 R >>"
+        ).encode("ascii")
+        objects.append(page)
+        objects.append(f"<< /Length {len(stream)} >>\nstream\n".encode("ascii") + stream + b"\nendstream")
+
+    pdf = bytearray(b"%PDF-1.4\n%\xe2\xe3\xcf\xd3\n")
+    offsets = [0]
+    for object_id, body in enumerate(objects, start=1):
+        offsets.append(len(pdf))
+        pdf.extend(f"{object_id} 0 obj\n".encode("ascii"))
+        pdf.extend(body + b"\nendobj\n")
+    xref_at = len(pdf)
+    pdf.extend(f"xref\n0 {len(offsets)}\n0000000000 65535 f \n".encode("ascii"))
+    for offset in offsets[1:]:
+        pdf.extend(f"{offset:010d} 00000 n \n".encode("ascii"))
+    pdf.extend(f"trailer\n<< /Size {len(offsets)} /Root 1 0 R >>\nstartxref\n{xref_at}\n%%EOF\n".encode("ascii"))
+    return bytes(pdf)
 
 
 def model_metrics_display() -> pd.DataFrame:
