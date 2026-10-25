@@ -43,9 +43,6 @@ except Exception as exc:
     st.stop()
 
 colors = {"Alto": "#d4473f", "Medio": "#e5a629", "Bajo": "#38936a"}
-missing = sorted(set(top["provincia_norm"]) - set(PROVINCE_CENTERS))
-if missing:
-    st.warning("No hay centro aproximado configurado para estas provincias: " + ", ".join(missing))
 top = top[top["provincia_norm"].isin(PROVINCE_CENTERS)].copy()
 top["lat"] = top["provincia_norm"].map(lambda p: PROVINCE_CENTERS[p][0])
 top["lon"] = top["provincia_norm"].map(lambda p: PROVINCE_CENTERS[p][1])

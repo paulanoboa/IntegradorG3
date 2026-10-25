@@ -70,8 +70,8 @@ c4.metric(T["months"], f"{int(latest['Mes_Alto_Riesgo'].sum()):,}", f"{max_year}
 
 
 b1, b2, b3 = st.columns([1, 1, 1])
-if b1.button(f"⌕  {T['consult']}", use_container_width=True, key="nav_consultar"): st.session_state["section"] = "consult"
-if b2.button(f"▥  {T['metrics']}", use_container_width=True): st.session_state["section"] = "metrics"
+#if b1.button(f"⌕  {T['consult']}", use_container_width=True, key="nav_consultar"): st.session_state["section"] = "consult"
+#if b2.button(f"▥  {T['metrics']}", use_container_width=True): st.session_state["section"] = "metrics"
 if b3.button(f"⌖  {T['map']}", use_container_width=True): st.switch_page("pages/1_Mapa_interactivo.py")
 section = st.session_state.get("section", "consult")
 
@@ -135,13 +135,7 @@ if section == "consult":
     if st.session_state.get("predictions"):
         history = pd.DataFrame(st.session_state["predictions"])
         st.subheader(T["history"])
-        st.dataframe(history, hide_index=True, use_container_width=True)
-        if len(history) > 1:
-            st.subheader(T["comparison"])
-            chosen = st.multiselect("Selecciona predicciones para comparar", options=list(range(len(history))), default=list(range(min(5, len(history)))), format_func=lambda i: f"{history.iloc[i]['Cantón']} · {history.iloc[i]['Mes']}/{history.iloc[i]['Año']}")
-            if chosen:
-                fig = px.bar(history.iloc[chosen], x="Cantón", y="Probabilidad", color="Riesgo", color_discrete_map={"Alto":"#ce514c","Bajo":"#3a986c"}, hover_data=["Provincia","Mes","Modelo"], title="Probabilidad por escenario")
-                st.plotly_chart(fig, use_container_width=True)
+        st.dataframe(history.drop(columns=["Modelo"], errors="ignore"), hide_index=True, use_container_width=True)
         st.download_button("Descargar CSV", history.to_csv(index=False).encode("utf-8-sig"), "predicciones_riesgo.csv", "text/csv")
         st.download_button(
             "Download PDF" if english else "Descargar PDF",
@@ -150,6 +144,12 @@ if section == "consult":
             mime="application/pdf",
             key="download_predictions_pdf",
         )
+        if len(history) > 1:
+            st.subheader(T["comparison"])
+            chosen = st.multiselect("Selecciona predicciones para comparar", options=list(range(len(history))), default=list(range(min(5, len(history)))), format_func=lambda i: f"{history.iloc[i]['Cantón']} · {history.iloc[i]['Mes']}/{history.iloc[i]['Año']}")
+            if chosen:
+                fig = px.bar(history.iloc[chosen], x="Cantón", y="Probabilidad", color="Riesgo", color_discrete_map={"Alto":"#ce514c","Bajo":"#3a986c"}, hover_data=["Provincia","Mes","Modelo"], title="Probabilidad de Riesgo por escenario")
+                st.plotly_chart(fig, use_container_width=True)
 
 elif section == "metrics":
     st.subheader("Rendimiento en el conjunto de prueba 2025–2026" if not english else "Test set performance, 2025–2026")
