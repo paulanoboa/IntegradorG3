@@ -18,7 +18,15 @@ mayores incidentes.
 
 **Python versión:** 3.12.10
 
+## Videos
+#Video pitch de 5 minutos Negocio:
+https://drive.google.com/file/d/1wLA0LhiyxCoWKj3HkFNq0X1xbmlTfEBF/view?usp=drive_link
+
+#Video de respuestas a las preguntas:
+https://drive.google.com/file/d/1y9e6Yj1HqaoKO-jjpYIKb9MBhnHcJrfr/view?usp=drive_link
+
 ## Aplicación web
+https://integradorg3-mapaturismoecu.streamlit.app/
 
 El dashboard de Streamlit se inicia desde la raíz del repositorio:
 
@@ -176,7 +184,7 @@ Se a generado tabién:
 5. Implementación de ética en la IA
 
 Se ha verificado
-Para abrir el sitio local, ejecute `python src/app.py` y visite `http://127.0.0.1:5000`. El panel tiene las secciones Consultar, Ver gráficos y Ver mapa. El mapa usa Leaflet y mosaicos de OpenStreetMap; necesita acceso a internet para cargar el mapa base.
+Para abrir el sitio productivo, ejecute `python src/app.py` y visite `https://integradorg3-mapaturismoecu.streamlit.app/`. El panel tiene las secciones Consultar y Ver mapa. El mapa usa Leaflet y mosaicos de OpenStreetMap; necesita acceso a internet para cargar el mapa base.
 
 ## 6. Resultados:
 Los resultados se cargaran en la pagina web para acceso y transparencia de los usuarios
@@ -199,7 +207,7 @@ Ver opción Resultados. Encontrará lo siguiente:
 1. Ir a la siguiente url donde se encuentra el repositorio del proyecto en github: https://github.com/paulanoboa/IntegradorG3
 2. Abrir el git del computador y clonar el repositorio: git clone https://github.com/paulanoboa/IntegradorG3
 3. Ejecutar proyecto.app python src/app.py`
-4. Abrir la URL http://127.0.0.1:5000/
+4. Abrir la URL https://integradorg3-mapaturismoecu.streamlit.app/
 5. Navegar en el proyecto
 
 ## 8. Interfaz de usuario:
@@ -207,7 +215,7 @@ Ver opción Resultados. Encontrará lo siguiente:
 *Instrucciones para usar la interfaz
 - Los resultados: se visualizaran los datos resultados del entrenamiento y se visualizará las métricas de los modelos usados asi como las gráficas generadas
 - Mapa: Se visualizará el mapa de calor donde se indicaran gráficamente los sectores de mayor, mediano y bajo riesgo
-*Link a la aplicación desplegada: http://127.0.0.1:5000/
+*Link a la aplicación desplegada: https://integradorg3-mapaturismoecu.streamlit.app/
 
 ## 9.Estructura del proyecto:
 • Descripción breve de cada carpeta principal:
